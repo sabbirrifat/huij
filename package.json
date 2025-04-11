@@ -1,0 +1,16 @@
+{
+  "name": "zelmar-auto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "pipo.js",
+  "scripts": {
+    "start": "node pipo.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^24.6.1"
+  }
+}
