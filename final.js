@@ -228,6 +228,7 @@ async function fetchData(pageToken = null) {
           Authorization: authToken,
           "Content-Type": "application/json",
         },
+        timeout: 20000, // 20 second timeout
       }
     );
 
@@ -242,6 +243,18 @@ async function fetchData(pageToken = null) {
     // Check if we have a next page token and haven't reached the API call limit
     if (data.meta && data.meta.nextPageToken) {
       console.log(`Fetching next page with token: ${data.meta.nextPageToken}`);
+
+      if (apiCallCount % 100 === 0) {
+        console.log(`\x1b[33mWaiting for 10 seconds before fetching next page\x1b[0m`);
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+
+        fs.writeFileSync("lastPageToken.txt", data.meta.nextPageToken);
+        console.log(`Saved last page token to lastPageToken.txt`);
+
+        fs.writeFileSync(resultsFile, JSON.stringify(allFetchedItems, null, 2));
+        console.log(`Wrote ${allFetchedItems.length} items to ${resultsFile}`);
+        console.log(`\x1b[33mCheckpoint saved at ${apiCallCount} API calls\x1b[0m`);
+      }
       // Wait between requests to avoid rate limiting
       await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
       await fetchData(data.meta.nextPageToken);
