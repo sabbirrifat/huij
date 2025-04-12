@@ -199,6 +199,33 @@ async function refreshToken() {
   }
 }
 
+// Function to save data in chunks
+function saveDataInChunks(data, baseFilename) {
+  // Use a fixed chunk size of 250,000 items
+  const chunkSize = 250000;
+  const numChunks = Math.ceil(data.length / chunkSize);
+  
+  console.log(`Splitting ${data.length} items into ${numChunks} chunk(s) of ${chunkSize} items each`);
+  
+  // If data fits in one file, just write it directly
+  if (data.length <= chunkSize) {
+    fs.writeFileSync(baseFilename, JSON.stringify(data));
+    console.log(`Wrote ${data.length} items to ${baseFilename}`);
+    return;
+  }
+  
+  // Otherwise split data into chunks and save each chunk
+  for (let i = 0; i < numChunks; i++) {
+    const start = i * chunkSize;
+    const end = Math.min(start + chunkSize, data.length);
+    const chunk = data.slice(start, end);
+    
+    const chunkFilename = `${baseFilename.replace('.json', '')}_chunk${i+1}.json`;
+    fs.writeFileSync(chunkFilename, JSON.stringify(chunk));
+    console.log(`Wrote ${chunk.length} items to ${chunkFilename}`);
+  }
+}
+
 // Function to make API request with optional page token
 async function fetchData(pageToken = null) {
   // Base URL for API
@@ -251,8 +278,7 @@ async function fetchData(pageToken = null) {
         fs.writeFileSync("lastPageToken.txt", data.meta.nextPageToken);
         console.log(`Saved last page token to lastPageToken.txt`);
 
-        fs.writeFileSync(resultsFile, JSON.stringify(allFetchedItems, null, 2));
-        console.log(`Wrote ${allFetchedItems.length} items to ${resultsFile}`);
+        saveDataInChunks(allFetchedItems, resultsFile);
         console.log(`\x1b[33mCheckpoint saved at ${apiCallCount} API calls\x1b[0m`);
       }
       // Wait between requests to avoid rate limiting
@@ -268,7 +294,7 @@ async function fetchData(pageToken = null) {
       }
 
       // Write results to file when done
-      fs.writeFileSync(resultsFile, JSON.stringify(allFetchedItems, null, 2));
+      saveDataInChunks(allFetchedItems, resultsFile);
       console.log(`Wrote ${allFetchedItems.length} items to ${resultsFile}`);
 
       // Close browser when completely done
@@ -304,7 +330,7 @@ async function fetchData(pageToken = null) {
         }
 
         // Write results to file when done
-        fs.writeFileSync(resultsFile, JSON.stringify(allFetchedItems, null, 2));
+        saveDataInChunks(allFetchedItems, resultsFile);
         console.log(`Wrote ${allFetchedItems.length} items to ${resultsFile}`);
 
         // Close browser when completely done
@@ -322,7 +348,7 @@ async function fetchData(pageToken = null) {
       }
 
       // Write results to file when done
-      fs.writeFileSync(resultsFile, JSON.stringify(allFetchedItems, null, 2));
+      saveDataInChunks(allFetchedItems, resultsFile);
       console.log(`Wrote ${allFetchedItems.length} items to ${resultsFile}`);
 
       // Close browser when completely done
