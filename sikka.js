@@ -1,5 +1,11 @@
 const puppeteer = require("puppeteer");
 
+function delay(time) {
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
+  });
+}
+
 async function scrape() {
   // Replace these with actual credentials
   const email = "sikka@gmail.com";
@@ -7,13 +13,9 @@ async function scrape() {
 
   // Launch browser
   const browser = await puppeteer.launch({
-    headless: true, // Set to true in production
+    headless: false, // Set to true in production
     defaultViewport: null,
-    args: [
-      "--window-size=1920,1080",
-      "--no-sandbox",
-      "--disable-setuid-sandbox"
-    ]
+    args: ["--window-size=1920,1080", "--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   try {
@@ -27,19 +29,21 @@ async function scrape() {
     console.log("Filling email field...");
     await page.waitForSelector('input[type="email"]', { visible: true });
     await page.type('input[type="email"]', email);
-    
+
     // Fill password field
     console.log("Filling password field...");
     await page.waitForSelector('input[type="password"]', { visible: true });
     await page.type('input[type="password"]', password);
-    
+
     // Click login button - wait for it to be enabled first
     /* console.log("Waiting for login button to be enabled...");
     await page.waitForFunction(() => {
       const button = document.querySelector('form button[type="submit"]');
       return button && !button.disabled;
     }, { timeout: 5000 }); */
-    
+
+    await delay(3000);
+
     console.log("Clicking login button...");
     await page.click('form button[type="submit"]');
 
@@ -52,6 +56,7 @@ async function scrape() {
     await page.goto("https://app.zeliq.com/app/search/contact", { waitUntil: "networkidle2" }); */
 
     // Extract Bearer token from network requests
+    await delay(3000);
     console.log("Extracting Bearer token...");
 
     /* // Enable request interception to view headers
@@ -72,12 +77,11 @@ async function scrape() {
 
     // If the token wasn't found in requests, try checking localStorage
 
-    
     bearerToken = await page.evaluate(() => {
       // Find the Cognito token by matching pattern
       let token = null;
       const prefix = "Services";
-      
+
       // Iterate through all localStorage keys
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);

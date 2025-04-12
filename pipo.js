@@ -1,5 +1,12 @@
 const puppeteer = require("puppeteer");
 
+// Helper function for delays
+function delay(time) {
+  return new Promise(function(resolve) { 
+    setTimeout(resolve, time);
+  });
+}
+
 async function scrape() {
   // Replace these with actual credentials
   const email = "brendon@aifusion.space";
@@ -29,6 +36,10 @@ async function scrape() {
     await page.waitForSelector('input[type="password"]', { visible: true });
     await page.type('input[type="password"]', password);
     
+    // Wait for 3 seconds after filling credentials
+    console.log("Waiting for 3 seconds after filling credentials...");
+    await delay(3000);
+    
     // Click login button - wait for it to be enabled first
     console.log("Waiting for login button to be enabled...");
     await page.waitForFunction(() => {
@@ -42,6 +53,10 @@ async function scrape() {
     // Wait for navigation
     await page.waitForNavigation({ waitUntil: "networkidle2" });
     console.log("Login successful!");
+
+    // Wait for 5 seconds after login
+    console.log("Waiting for 5 seconds after login...");
+    await delay(5000);
 
     // Navigate to the specified page
     console.log("Navigating to leads/contact page...");
