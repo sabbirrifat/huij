@@ -237,14 +237,14 @@ async function fetchData(pageToken = null) {
     // Add items to global array
     if (data.items && Array.isArray(data.items)) {
       allFetchedItems.push(...data.items);
-      console.log(`Fetched ${data.items.length} items. Total items so far: ${allFetchedItems.length}`);
+      console.log(`\x1b[32mFetched ${data.items.length} items. Total items so far: ${allFetchedItems.length}\x1b[0m`);
     }
 
     // Check if we have a next page token and haven't reached the API call limit
     if (data.meta && data.meta.nextPageToken) {
       console.log(`Fetching next page with token: ${data.meta.nextPageToken}`);
 
-      if (apiCallCount % 100 === 0) {
+      if (apiCallCount % 1000 === 0) {
         console.log(`\x1b[33mWaiting for 10 seconds before fetching next page\x1b[0m`);
         await new Promise((resolve) => setTimeout(resolve, 10000));
 
