@@ -5,7 +5,8 @@
   "main": "final.js",
   "scripts": {
     "start": "node final.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "setup": "./setup.sh"
   },
   "keywords": [],
   "author": "",
