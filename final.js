@@ -220,7 +220,7 @@ function saveDataInChunks(data, baseFilename) {
     const end = Math.min(start + chunkSize, data.length);
     const chunk = data.slice(start, end);
     
-    const chunkFilename = `${baseFilename.replace('.json', '')}_chunk${i+1}.json`;
+    const chunkFilename = `${baseFilename.replace('.json', '')}_chunk_${i+1}.json`;
     fs.writeFileSync(chunkFilename, JSON.stringify(chunk));
     console.log(`Wrote ${chunk.length} items to ${chunkFilename}`);
   }
