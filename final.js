@@ -3,7 +3,31 @@ const axios = require("axios");
 const fs = require("fs");
 const readline = require("readline");
 
-const { RealEstateAndEquipmentRentalServices, OilGasAndMining } = require("./categoryPayloads");
+const {
+  AccomodationServices,
+  AdministrativeAndSupportServices,
+  Construction,
+  ConsumerGoods,
+  ConsumerServices,
+  Education,
+  EntertainmnetProviders,
+  FarmingRanchingAndForestry,
+  FinancialServices,
+  FoodProduction,
+  GovermentAdministration,
+  HealthCare,
+  hospitalsAndHealthCare,
+  Manufacturing,
+  NonProfitOrganizations,
+  OilGasAndMining,
+  ProfessionalServices,
+  RealEstateAndEquipmentRentalServices,
+  Retail,
+  TechnologyInformationAndMedia,
+  TransportationLogisticsAndSupplyChain,
+  Utilities,
+  Wholesale,
+} = require("./categoryPayloads");
 
 // Create readline interface
 const rl = readline.createInterface({
@@ -40,12 +64,45 @@ let apiCallCount = 0;
 //const MAX_API_CALLS = 100;
 const WAIT_TIME = 100;
 
-const resultsFile = "us-oil-gas-and-mining.json";
+let resultsFile = ""; // Changed from const to let to allow updating
 
 // Initialize existing data from results.json if it exists
 function loadExistingData() {
   try {
+    const baseFilename = resultsFile.replace(".json", "");
+    let allData = [];
+    let chunkIndex = 1;
+    let chunkedFilesExist = false;
+    
+    // First check if chunked files exist
+    const firstChunkFilename = `${baseFilename}_chunk_1.json`;
+    if (fs.existsSync(firstChunkFilename)) {
+      chunkedFilesExist = true;
+      console.log("Found chunked files, loading data from all chunks...");
+      
+      // Load data from all chunks
+      while (true) {
+        const chunkFilename = `${baseFilename}_chunk_${chunkIndex}.json`;
+        if (!fs.existsSync(chunkFilename)) {
+          break;
+        }
+
+        console.log(`Loading data from ${chunkFilename}...`);
+        const chunkResult = fs.readFileSync(chunkFilename, "utf8");
+        const chunkData = JSON.parse(chunkResult);
+        allData.push(...chunkData);
+        console.log(`Loaded ${chunkData.length} items from chunk ${chunkIndex}`);
+
+        chunkIndex++;
+      }
+      
+      console.log(`Total loaded items from all chunks: ${allData.length}`);
+      return allData;
+    }
+    
+    // If no chunks exist, try loading the single file
     if (fs.existsSync(resultsFile)) {
+      console.log(`Loading data from single file: ${resultsFile}`);
       const existingData = fs.readFileSync(resultsFile, "utf8");
       return JSON.parse(existingData);
     }
@@ -200,34 +257,34 @@ async function refreshToken() {
 }
 
 // Function to save data in chunks
-function saveDataInChunks(data, baseFilename) {
+function saveDataInChunks(data, filename) {
   // Use a fixed chunk size of 250,000 items
   const chunkSize = 250000;
   const numChunks = Math.ceil(data.length / chunkSize);
-  
+
   console.log(`Splitting ${data.length} items into ${numChunks} chunk(s) of ${chunkSize} items each`);
-  
+
   // If data fits in one file, just write it directly
   if (data.length <= chunkSize) {
-    fs.writeFileSync(baseFilename, JSON.stringify(data));
-    console.log(`Wrote ${data.length} items to ${baseFilename}`);
+    fs.writeFileSync(filename, JSON.stringify(data));
+    console.log(`Wrote ${data.length} items to ${filename}`);
     return;
   }
-  
+
   // Otherwise split data into chunks and save each chunk
   for (let i = 0; i < numChunks; i++) {
     const start = i * chunkSize;
     const end = Math.min(start + chunkSize, data.length);
     const chunk = data.slice(start, end);
-    
-    const chunkFilename = `${baseFilename.replace('.json', '')}_chunk_${i+1}.json`;
+
+    const chunkFilename = `${filename.replace(".json", "")}_chunk_${i + 1}.json`;
     fs.writeFileSync(chunkFilename, JSON.stringify(chunk));
     console.log(`Wrote ${chunk.length} items to ${chunkFilename}`);
   }
 }
 
 // Function to make API request with optional page token
-async function fetchData(pageToken = null) {
+async function fetchData(pageToken = null, selectedCategory) {
   // Base URL for API
   const baseUrl = `https://api.zeliq.com/api/${orgId}/leads/search?limitPerPage=100&resource=contact`;
   try {
@@ -248,7 +305,7 @@ async function fetchData(pageToken = null) {
     const response = await axios.post(
       url,
       {
-        filters: OilGasAndMining.filters,
+        filters: selectedCategory.filters,
       },
       {
         headers: {
@@ -283,7 +340,7 @@ async function fetchData(pageToken = null) {
       }
       // Wait between requests to avoid rate limiting
       await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
-      await fetchData(data.meta.nextPageToken);
+      await fetchData(data.meta.nextPageToken, selectedCategory);
     } else {
       console.log(`Finished fetching data after ${apiCallCount} API calls.`);
 
@@ -320,7 +377,7 @@ async function fetchData(pageToken = null) {
         // Retry the request with the new token (don't increment API call count)
         apiCallCount--;
         await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
-        return await fetchData(pageToken);
+        return await fetchData(pageToken, selectedCategory);
       } else {
         console.log("Something went wrong, INSIDE ELSE saving last page token and results to file");
         // Save the last page token to file if available
@@ -370,6 +427,142 @@ async function main() {
     email = await prompt("Enter your email: ");
     password = await prompt("Enter your password: ");
 
+    // Ask user to select a category
+    console.log("\nPlease select a category by entering the corresponding number:");
+    console.log("1. Accommodation Services");
+    console.log("2. Administrative And Support Services");
+    console.log("3. Construction");
+    console.log("4. Consumer Goods");
+    console.log("5. Consumer Services");
+    console.log("6. Education");
+    console.log("7. Entertainment Providers");
+    console.log("8. Farming, Ranching And Forestry");
+    console.log("9. Financial Services");
+    console.log("10. Food Production");
+    console.log("11. Government Administration");
+    console.log("12. Health Care");
+    console.log("13. Hospitals And Health Care");
+    console.log("14. Manufacturing");
+    console.log("15. Non-Profit Organizations");
+    console.log("16. Oil, Gas And Mining");
+    console.log("17. Professional Services");
+    console.log("18. Real Estate And Equipment Rental Services");
+    console.log("19. Retail");
+    console.log("20. Technology, Information And Media");
+    console.log("21. Transportation, Logistics And Supply Chain");
+    console.log("22. Utilities");
+    console.log("23. Wholesale");
+
+    const categoryChoice = await prompt("Enter your choice (1-23): ");
+    
+    // Parse the category choice
+    let selectedCategory;
+    let categoryName;
+    
+    switch (categoryChoice.trim()) {
+      case "1":
+        selectedCategory = AccomodationServices;
+        categoryName = "accommodation-services";
+        break;
+      case "2":
+        selectedCategory = AdministrativeAndSupportServices;
+        categoryName = "administrative-and-support-services";
+        break;
+      case "3":
+        selectedCategory = Construction;
+        categoryName = "construction";
+        break;
+      case "4":
+        selectedCategory = ConsumerGoods;
+        categoryName = "consumer-goods";
+        break;
+      case "5":
+        selectedCategory = ConsumerServices;
+        categoryName = "consumer-services";
+        break;
+      case "6":
+        selectedCategory = Education;
+        categoryName = "education";
+        break;
+      case "7":
+        selectedCategory = EntertainmnetProviders;
+        categoryName = "entertainment-providers";
+        break;
+      case "8":
+        selectedCategory = FarmingRanchingAndForestry;
+        categoryName = "farming-ranching-and-forestry";
+        break;
+      case "9":
+        selectedCategory = FinancialServices;
+        categoryName = "financial-services";
+        break;
+      case "10":
+        selectedCategory = FoodProduction;
+        categoryName = "food-production";
+        break;
+      case "11":
+        selectedCategory = GovermentAdministration;
+        categoryName = "government-administration";
+        break;
+      case "12":
+        selectedCategory = HealthCare;
+        categoryName = "health-care";
+        break;
+      case "13":
+        selectedCategory = hospitalsAndHealthCare;
+        categoryName = "hospitals-and-health-care";
+        break;
+      case "14":
+        selectedCategory = Manufacturing;
+        categoryName = "manufacturing";
+        break;
+      case "15":
+        selectedCategory = NonProfitOrganizations;
+        categoryName = "non-profit-organizations";
+        break;
+      case "16":
+        selectedCategory = OilGasAndMining;
+        categoryName = "oil-gas-and-mining";
+        break;
+      case "17":
+        selectedCategory = ProfessionalServices;
+        categoryName = "professional-services";
+        break;
+      case "18":
+        selectedCategory = RealEstateAndEquipmentRentalServices;
+        categoryName = "real-estate-and-equipment-rental-services";
+        break;
+      case "19":
+        selectedCategory = Retail;
+        categoryName = "retail";
+        break;
+      case "20":
+        selectedCategory = TechnologyInformationAndMedia;
+        categoryName = "technology-information-and-media";
+        break;
+      case "21":
+        selectedCategory = TransportationLogisticsAndSupplyChain;
+        categoryName = "transportation-logistics-and-supply-chain";
+        break;
+      case "22":
+        selectedCategory = Utilities;
+        categoryName = "utilities";
+        break;
+      case "23":
+        selectedCategory = Wholesale;
+        categoryName = "wholesale";
+        break;
+      default:
+        console.log("Invalid choice. Defaulting to Oil, Gas And Mining.");
+        selectedCategory = OilGasAndMining;
+        categoryName = "oil-gas-and-mining";
+    }
+
+    // Update the results file based on selected category
+    resultsFile = `us-${categoryName}.json`;
+    console.log(`\nSelected category: ${categoryName}`);
+    console.log(`Results will be saved to: ${resultsFile}`);
+
     // Close readline interface
     rl.close();
 
@@ -387,8 +580,8 @@ async function main() {
       console.log(`Starting with stored page token: ${lastPageToken}`);
     }
 
-    // Start the fetch process
-    await fetchData(lastPageToken);
+    // Start the fetch process with the selected category
+    await fetchData(lastPageToken, selectedCategory);
     console.log("Process completed");
 
     // Ensure browser is closed at the end

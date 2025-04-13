@@ -831,7 +831,7 @@ const Wholesale = {
   ],
 };
 
-export {
+module.exports = {
   AccomodationServices,
   AdministrativeAndSupportServices,
   Construction,
