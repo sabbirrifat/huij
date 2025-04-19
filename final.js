@@ -55,9 +55,12 @@ let browser;
 let page;
 let authToken = "";
 let allFetchedItems = [];
+let totalFetchCount = 0; // Track total number of items fetched across all chunks
 let email;
 let password;
 let orgId = "";
+let lastChunkFewerThan100k = false;
+let lastChunkFewerThan100kCount = 0;
 
 // Counter for API calls
 let apiCallCount = 0;
@@ -70,46 +73,59 @@ let resultsFile = ""; // Changed from const to let to allow updating
 function loadExistingData() {
   try {
     const baseFilename = resultsFile.replace(".json", "");
-    let allData = [];
-    let chunkIndex = 1;
-    let chunkedFilesExist = false;
-    
-    // First check if chunked files exist
-    const firstChunkFilename = `${baseFilename}_chunk_1.json`;
-    if (fs.existsSync(firstChunkFilename)) {
-      chunkedFilesExist = true;
-      console.log("Found chunked files, loading data from all chunks...");
-      
-      // Load data from all chunks
-      while (true) {
-        const chunkFilename = `${baseFilename}_chunk_${chunkIndex}.json`;
-        if (!fs.existsSync(chunkFilename)) {
-          break;
-        }
 
-        console.log(`Loading data from ${chunkFilename}...`);
-        const chunkResult = fs.readFileSync(chunkFilename, "utf8");
-        const chunkData = JSON.parse(chunkResult);
-        allData.push(...chunkData);
-        console.log(`Loaded ${chunkData.length} items from chunk ${chunkIndex}`);
-
-        chunkIndex++;
-      }
-      
-      console.log(`Total loaded items from all chunks: ${allData.length}`);
-      return allData;
+    // First load the total count if it exists
+    if (fs.existsSync("totalFetchCount.txt")) {
+      totalFetchCount = parseInt(fs.readFileSync("totalFetchCount.txt", "utf8").trim(), 10) || 0;
+      console.log(`Total items fetched so far: ${totalFetchCount}`);
     }
-    
-    // If no chunks exist, try loading the single file
+
+    // Find the latest chunk file
+    let lastChunkIndex = 0;
+    let lastChunkFile = "";
+
+    // Determine if any chunk files exist and find the latest one
+    while (true) {
+      const chunkFilename = `${baseFilename}_chunk_${lastChunkIndex + 1}.json`;
+      if (fs.existsSync(chunkFilename)) {
+        lastChunkIndex++;
+        lastChunkFile = chunkFilename;
+      } else {
+        break;
+      }
+    }
+
+    console.log(`Found ${lastChunkIndex} chunk files`);
+
+    // Only load the last chunk if it has fewer than 100,000 items
+    if (lastChunkFile && lastChunkIndex > 0) {
+      console.log(`Checking last chunk file: ${lastChunkFile}`);
+      const chunkData = JSON.parse(fs.readFileSync(lastChunkFile, "utf8"));
+
+      if (chunkData.length < 100000) {
+        lastChunkFewerThan100k = true;
+        lastChunkFewerThan100kCount += chunkData.length;
+        console.log(`Last chunk contains ${chunkData.length} items (< 100,000), loading into memory`);
+        return chunkData;
+      } else {
+        console.log(`Last chunk contains ${chunkData.length} items (= 100,000), no need to load into memory`);
+        return []; // Return empty array as we don't need to load a full chunk
+      }
+    }
+
+    // If no chunk files found, check the original single file
     if (fs.existsSync(resultsFile)) {
-      console.log(`Loading data from single file: ${resultsFile}`);
+      console.log(`No chunks found. Loading data from single file: ${resultsFile}`);
       const existingData = fs.readFileSync(resultsFile, "utf8");
       return JSON.parse(existingData);
     }
+
+    console.log("No existing data found");
+    return [];
   } catch (error) {
     console.error("Error reading existing results file:", error.message);
+    return [];
   }
-  return [];
 }
 
 // Function to login and get token using puppeteer
@@ -258,29 +274,54 @@ async function refreshToken() {
 
 // Function to save data in chunks
 function saveDataInChunks(data, filename) {
-  // Use a fixed chunk size of 250,000 items
-  const chunkSize = 250000;
-  const numChunks = Math.ceil(data.length / chunkSize);
-
-  console.log(`Splitting ${data.length} items into ${numChunks} chunk(s) of ${chunkSize} items each`);
-
-  // If data fits in one file, just write it directly
-  if (data.length <= chunkSize) {
-    fs.writeFileSync(filename, JSON.stringify(data));
-    console.log(`Wrote ${data.length} items to ${filename}`);
+  if (data.length === 0) {
+    console.log("No data to save");
     return;
   }
 
-  // Otherwise split data into chunks and save each chunk
-  for (let i = 0; i < numChunks; i++) {
-    const start = i * chunkSize;
-    const end = Math.min(start + chunkSize, data.length);
-    const chunk = data.slice(start, end);
+  const baseFilename = filename.replace(".json", "");
+  let nextChunkIndex = 1;
 
-    const chunkFilename = `${filename.replace(".json", "")}_chunk_${i + 1}.json`;
-    fs.writeFileSync(chunkFilename, JSON.stringify(chunk));
-    console.log(`Wrote ${chunk.length} items to ${chunkFilename}`);
+  // Find the next available chunk index
+  while (true) {
+    const chunkFilename = `${baseFilename}_chunk_${nextChunkIndex}.json`;
+    if (!fs.existsSync(chunkFilename)) {
+      break;
+    }
+    nextChunkIndex++;
   }
+
+  let chunkFilename;
+
+  if (lastChunkFewerThan100k) {
+    chunkFilename = `${baseFilename}_chunk_${nextChunkIndex - 1}.json`;
+  } else {
+    chunkFilename = `${baseFilename}_chunk_${nextChunkIndex}.json`;
+  }
+
+  console.log(`Saving ${data.length} items to ${chunkFilename}`);
+
+  // Write the current data chunk
+  fs.writeFileSync(chunkFilename, JSON.stringify(data));
+
+  // Update and save the total fetch count
+  if (lastChunkFewerThan100k) {
+    const newTotalFetchCount = totalFetchCount - lastChunkFewerThan100kCount;
+    totalFetchCount = newTotalFetchCount + data.length;
+
+    lastChunkFewerThan100k = false;
+    lastChunkFewerThan100kCount = 0;
+    console.log("Saving into last chunk file ......");
+    console.log("Reset lastChunkFewerThan100k to false");
+  } else {
+    totalFetchCount += data.length;
+  }
+  fs.writeFileSync("totalFetchCount.txt", totalFetchCount.toString());
+  console.log(`Updated total fetch count: ${totalFetchCount} (saved to totalFetchCount.txt)`);
+
+  // Clear the array to free up memory
+  allFetchedItems = [];
+  console.log("Cleared allFetchedItems array to save memory");
 }
 
 // Function to make API request with optional page token
@@ -321,23 +362,32 @@ async function fetchData(pageToken = null, selectedCategory) {
     // Add items to global array
     if (data.items && Array.isArray(data.items)) {
       allFetchedItems.push(...data.items);
-      console.log(`\x1b[32mFetched ${data.items.length} items. Total items so far: ${allFetchedItems.length}\x1b[0m`);
+      console.log(
+        `\x1b[32mFetched ${data.items.length} items. Current batch: ${allFetchedItems.length}, Total overall: ${
+          totalFetchCount + allFetchedItems.length
+        }\x1b[0m`
+      );
     }
 
     // Check if we have a next page token and haven't reached the API call limit
     if (data.meta && data.meta.nextPageToken) {
       console.log(`Fetching next page with token: ${data.meta.nextPageToken}`);
 
-      if (apiCallCount % 1000 === 0) {
-        console.log(`\x1b[33mWaiting for 10 seconds before fetching next page\x1b[0m`);
-        await new Promise((resolve) => setTimeout(resolve, 10000));
+      if (allFetchedItems.length >= 100000) {
+        console.log(`\x1b[33mReached 100,000 items in current batch. Saving checkpoint.\x1b[0m`);
 
+        // Save the last page token
         fs.writeFileSync("lastPageToken.txt", data.meta.nextPageToken);
         console.log(`Saved last page token to lastPageToken.txt`);
 
+        // Save the data chunk and clear memory
         saveDataInChunks(allFetchedItems, resultsFile);
         console.log(`\x1b[33mCheckpoint saved at ${apiCallCount} API calls\x1b[0m`);
+
+        console.log(`\x1b[33mWaiting for 10 seconds before fetching next page\x1b[0m`);
+        await new Promise((resolve) => setTimeout(resolve, 10000));
       }
+
       // Wait between requests to avoid rate limiting
       await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
       await fetchData(data.meta.nextPageToken, selectedCategory);
@@ -350,9 +400,9 @@ async function fetchData(pageToken = null, selectedCategory) {
         console.log(`Saved last page token to lastPageToken.txt`);
       }
 
-      // Write results to file when done
+      // Write final batch to file when done
       saveDataInChunks(allFetchedItems, resultsFile);
-      console.log(`Wrote ${allFetchedItems.length} items to ${resultsFile}`);
+      console.log(`Completed saving all ${totalFetchCount} items`);
 
       // Close browser when completely done
       if (browser) {
@@ -379,36 +429,36 @@ async function fetchData(pageToken = null, selectedCategory) {
         await new Promise((resolve) => setTimeout(resolve, WAIT_TIME));
         return await fetchData(pageToken, selectedCategory);
       } else {
-        console.log("Something went wrong, INSIDE ELSE saving last page token and results to file");
+        console.log("Something went wrong, saving last page token and current batch to file");
         // Save the last page token to file if available
         if (pageToken) {
           fs.writeFileSync("lastPageToken.txt", pageToken);
           console.log(`Saved last page token to lastPageToken.txt`);
         }
 
-        // Write results to file when done
+        // Write current batch to file
         saveDataInChunks(allFetchedItems, resultsFile);
-        console.log(`Wrote ${allFetchedItems.length} items to ${resultsFile}`);
+        console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
 
-        // Close browser when completely done
+        // Close browser when done
         if (browser) {
           await browser.close();
           console.log("Browser closed");
         }
       }
     } else {
-      console.log("Something went wrong, saving last page token and results to file");
+      console.log("Something went wrong, saving last page token and current batch to file");
       // Save the last page token to file if available
       if (pageToken) {
         fs.writeFileSync("lastPageToken.txt", pageToken);
         console.log(`Saved last page token to lastPageToken.txt`);
       }
 
-      // Write results to file when done
+      // Write current batch to file
       saveDataInChunks(allFetchedItems, resultsFile);
-      console.log(`Wrote ${allFetchedItems.length} items to ${resultsFile}`);
+      console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
 
-      // Close browser when completely done
+      // Close browser when done
       if (browser) {
         await browser.close();
         console.log("Browser closed");
@@ -454,11 +504,11 @@ async function main() {
     console.log("23. Wholesale");
 
     const categoryChoice = await prompt("Enter your choice (1-23): ");
-    
+
     // Parse the category choice
     let selectedCategory;
     let categoryName;
-    
+
     switch (categoryChoice.trim()) {
       case "1":
         selectedCategory = AccomodationServices;
