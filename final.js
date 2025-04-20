@@ -376,14 +376,14 @@ async function fetchData(pageToken = null, selectedCategory) {
       if (allFetchedItems.length >= 100000) {
         console.log(`\x1b[33mReached 100,000 items in current batch. Saving checkpoint.\x1b[0m`);
 
-        // Save the last page token
-        fs.writeFileSync("lastPageToken.txt", data.meta.nextPageToken);
-        console.log(`Saved last page token to lastPageToken.txt`);
-
         // Save the data chunk and clear memory
         saveDataInChunks(allFetchedItems, resultsFile);
         console.log(`\x1b[33mCheckpoint saved at ${apiCallCount} API calls\x1b[0m`);
 
+        // Save the last page token
+        fs.writeFileSync("lastPageToken.txt", data.meta.nextPageToken);
+        console.log(`Saved last page token to lastPageToken.txt`);
+        
         console.log(`\x1b[33mWaiting for 10 seconds before fetching next page\x1b[0m`);
         await new Promise((resolve) => setTimeout(resolve, 10000));
       }
