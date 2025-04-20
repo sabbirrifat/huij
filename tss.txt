@@ -1,4 +1,0 @@
-Making API call #5890
-Fetched 100 items. Total items so far: 589000
-Fetching next page with token: 2 7000 575714498
-Making API call #5891

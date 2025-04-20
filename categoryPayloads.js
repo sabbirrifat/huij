@@ -1,7 +1,36 @@
+const topCountries = {
+  us: "united states",
+  uk: "united kingdom",
+  au: "australia",
+  nz: "new zealand",
+  de: "germany",
+  fr: "france",
+  ca: "canada",
+  ae: "united arab emirates",
+  nl: "netherlands",
+  ie: "ireland",
+  it: "italy",
+  es: "spain",
+  mx: "mexico",
+  se: "sweden",
+  tr: "turkey",
+  be: "belgium",
+  ch: "switzerland",
+  br: "brazil",
+  dk: "denmark",
+  no: "norway",
+  sg: "singapore",
+  id: "indonesia",
+};
+
+
+const selectedCountry = topCountries.us;
+
+
 //size 2.8 million
 const AccomodationServices = {
   filters: [
-    { field: "location_country", operator: "ANY_OF_VALUES", values: ["united states"] },
+    { field: "location_country", operator: "ANY_OF_VALUES", values: [selectedCountry] },
     {
       field: "job_company_industry",
       operator: "ANY_OF_VALUES",
@@ -24,7 +53,7 @@ const AccomodationServices = {
 //size 1.6 million
 const AdministrativeAndSupportServices = {
   filters: [
-    { field: "location_country", operator: "ANY_OF_VALUES", values: ["united states"] },
+    { field: "location_country", operator: "ANY_OF_VALUES", values: [selectedCountry] },
     {
       field: "job_company_industry",
       operator: "ANY_OF_VALUES",
@@ -57,7 +86,7 @@ const Construction = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -83,7 +112,7 @@ const Construction = {
 //size 75k only
 const ConsumerGoods = {
   filters: [
-    { field: "location_country", operator: "ANY_OF_VALUES", values: ["united states"] },
+    { field: "location_country", operator: "ANY_OF_VALUES", values: [selectedCountry] },
     {
       field: "job_company_industry",
       operator: "ANY_OF_VALUES",
@@ -105,7 +134,7 @@ const ConsumerServices = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -141,7 +170,7 @@ const Education = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -172,7 +201,7 @@ const EntertainmnetProviders = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -214,7 +243,7 @@ const FarmingRanchingAndForestry = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -230,7 +259,7 @@ const FinancialServices = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -266,7 +295,7 @@ const FoodProduction = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -283,7 +312,7 @@ const GovermentAdministration = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -328,7 +357,7 @@ const HealthCare = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -344,7 +373,7 @@ const hospitalsAndHealthCare = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -383,7 +412,7 @@ const Manufacturing = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -499,7 +528,7 @@ const NonProfitOrganizations = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -516,7 +545,7 @@ const OilGasAndMining = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -541,7 +570,7 @@ const ProfessionalServices = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -602,7 +631,7 @@ const RealEstateAndEquipmentRentalServices = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -628,7 +657,7 @@ const Retail = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -668,7 +697,7 @@ const TechnologyInformationAndMedia = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -729,7 +758,7 @@ const TransportationLogisticsAndSupplyChain = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -767,7 +796,7 @@ const Utilities = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
@@ -802,7 +831,7 @@ const Wholesale = {
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["united states"],
+      values: [selectedCountry],
     },
     {
       field: "job_company_industry",
