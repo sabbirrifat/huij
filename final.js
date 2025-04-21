@@ -395,7 +395,7 @@ async function fetchData(pageToken = null, selectedCategory) {
         // Save the last page token
         fs.writeFileSync("lastPageToken.txt", data.meta.nextPageToken);
         console.log(`Saved last page token to lastPageToken.txt`);
-        
+
         console.log(`\x1b[33mWaiting for 10 seconds before fetching next page\x1b[0m`);
         await new Promise((resolve) => setTimeout(resolve, 10000));
       }
@@ -460,7 +460,7 @@ async function fetchData(pageToken = null, selectedCategory) {
       }
     } else {
       console.log("Something went wrong, saving last page token and current batch to file");
-      
+
       // Write current batch to file
       saveDataInChunks(allFetchedItems, resultsFile);
       console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
@@ -486,48 +486,61 @@ async function fetchData(pageToken = null, selectedCategory) {
 // Main function to start the process
 async function main() {
   try {
-    // Get user input for email, password, and results file
-    email = await prompt("Enter your email: ");
-    password = await prompt("Enter your password: ");
+    let categoryChoice;
+    // Check if readlineInputs.json exists
+    if (fs.existsSync("readlineInputs.json")) {
+      const readlineInputs = JSON.parse(fs.readFileSync("readlineInputs.json", "utf8"));
+      console.log(`Loaded readline inputs from readlineInputs.json`);
+      email = readlineInputs.email;
+      password = readlineInputs.password;
+      categoryChoice = readlineInputs.seletedCategoryNumber;
+    } else {
+      // Get user input for email, password, and results file
+      email = await prompt("Enter your email: ");
+      password = await prompt("Enter your password: ");
 
-    // Ask user to select a category
-    console.log("\nPlease select a category by entering the corresponding number:");
-    console.log("1. Accommodation Services");
-    console.log("2. Administrative And Support Services");
-    console.log("3. Construction");
-    console.log("4. Consumer Goods");
-    console.log("5. Consumer Services");
-    console.log("6. Education");
-    console.log("7. Entertainment Providers");
-    console.log("8. Farming, Ranching And Forestry");
-    console.log("9. Financial Services");
-    console.log("10. Food Production");
-    console.log("11. Government Administration");
-    console.log("12. Health Care");
-    console.log("13. Hospitals And Health Care");
-    console.log("14. Manufacturing");
-    console.log("15. Non-Profit Organizations");
-    console.log("16. Oil, Gas And Mining");
-    console.log("17. Professional Services");
-    console.log("18. Real Estate And Equipment Rental Services");
-    console.log("19. Retail");
-    console.log("20. Technology, Information And Media");
-    console.log("21. Transportation, Logistics And Supply Chain");
-    console.log("22. Utilities");
-    console.log("23. Wholesale");
-    console.log("24. Professional Services One");
-    console.log("25. Professional Services Two");
-    console.log("26. Professional Services Three");
-    console.log("27. Professional Services Four");
-    console.log("28. Professional Services Five");
-    console.log("29. Manufacturing One");
-    console.log("30. Manufacturing Two");
-    console.log("31. Manufacturing Three");
-    console.log("32. Manufacturing Four");
-    console.log("33. Manufacturing Five");
-    console.log("34. Manufacturing Six");
+      // Ask user to select a category
+      console.log("\nPlease select a category by entering the corresponding number:");
+      console.log("1. Accommodation Services");
+      console.log("2. Administrative And Support Services");
+      console.log("3. Construction");
+      console.log("4. Consumer Goods");
+      console.log("5. Consumer Services");
+      console.log("6. Education");
+      console.log("7. Entertainment Providers");
+      console.log("8. Farming, Ranching And Forestry");
+      console.log("9. Financial Services");
+      console.log("10. Food Production");
+      console.log("11. Government Administration");
+      console.log("12. Health Care");
+      console.log("13. Hospitals And Health Care");
+      console.log("14. Manufacturing");
+      console.log("15. Non-Profit Organizations");
+      console.log("16. Oil, Gas And Mining");
+      console.log("17. Professional Services");
+      console.log("18. Real Estate And Equipment Rental Services");
+      console.log("19. Retail");
+      console.log("20. Technology, Information And Media");
+      console.log("21. Transportation, Logistics And Supply Chain");
+      console.log("22. Utilities");
+      console.log("23. Wholesale");
+      console.log("24. Professional Services One");
+      console.log("25. Professional Services Two");
+      console.log("26. Professional Services Three");
+      console.log("27. Professional Services Four");
+      console.log("28. Professional Services Five");
+      console.log("29. Manufacturing One");
+      console.log("30. Manufacturing Two");
+      console.log("31. Manufacturing Three");
+      console.log("32. Manufacturing Four");
+      console.log("33. Manufacturing Five");
+      console.log("34. Manufacturing Six");
 
-    const categoryChoice = await prompt("Enter your choice (1-23): ");
+      categoryChoice = await prompt("Enter your choice (1-23): ");
+
+      // Close readline interface
+      rl.close();
+    }
 
     // Parse the category choice
     let selectedCategory;
@@ -680,8 +693,16 @@ async function main() {
     console.log(`\nSelected category: ${categoryName}`);
     console.log(`Results will be saved to: ${resultsFile}`);
 
-    // Close readline interface
-    rl.close();
+    //Save these readline inputs to a json file
+    if (!fs.existsSync("readlineInputs.json")) {
+      const readlineInputs = {
+        email: email,
+        password: password,
+        seletedCategoryNumber: categoryChoice,
+      };
+      fs.writeFileSync("readlineInputs.json", JSON.stringify(readlineInputs, null, 2));
+      console.log(`Saved configurations for future use to readlineInputs.json`);
+    }
 
     // Load existing data
     allFetchedItems = loadExistingData();
