@@ -25,6 +25,7 @@ const topCountries = {
 
 
 const selectedCountry = topCountries.us;
+const selectedCountryKey = Object.keys(topCountries).find(key => topCountries[key] === selectedCountry);
 
 
 //size 2.8 million
@@ -521,6 +522,206 @@ const Manufacturing = {
   ],
 };
 
+// size 1 million
+const ManufacturingOne = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "abrasives and nonmetallic minerals manufacturing",
+        "accessible hardware manufacturing",
+        "agricultural chemical manufacturing",
+        "agriculture, construction, mining machinery manufacturing",
+        "alternative fuel vehicle manufacturing",
+        "animal feed manufacturing",
+        "apparel manufacturing",
+        "appliances, electrical, and electronics manufacturing",
+        "architectural and structural metal manufacturing",
+        "artificial rubber and synthetic fiber manufacturing",
+        "audio and video equipment manufacturing",
+        "automation machinery manufacturing",
+        "automotive",
+        "aviation and aerospace component manufacturing",
+      ],
+    },
+  ],
+};
+
+// size 1 million
+const ManufacturingTwo = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "baked goods manufacturing",
+        "beverage manufacturing",
+        "boilers, tanks, and shipping container manufacturing",
+        "breweries",
+      ],
+    },
+  ],
+};
+
+// size 1 million
+const ManufacturingThree = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "chemical manufacturing",
+        "chemical raw materials manufacturing",
+        "clay and refractory products manufacturing",
+        "climate technology product manufacturing",
+        "commercial and service industry machinery manufacturing",
+        "communications equipment manufacturing",
+        "computer hardware manufacturing",
+        "computers and electronics manufacturing",
+        "construction hardware manufacturing",
+        "cutlery and handtool manufacturing",
+        "dairy product manufacturing",
+        "defense & space",
+        "defense and space manufacturing",
+        "distilleries",
+      ],
+    },
+  ],
+};
+
+// size 1 million
+const ManufacturingFour = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "electric lighting equipment manufacturing",
+        "electrical equipment manufacturing",
+        "engines and power transmission equipment manufacturing",
+        "fabricated metal products",
+        "fashion accessories manufacturing",
+        "food and beverage manufacturing",
+        "footwear manufacturing",
+        "fruit and vegetable preserves manufacturing",
+        "fuel cell manufacturing",
+        "furniture",
+        "furniture and home furnishings manufacturing",
+        "glass product manufacturing",
+        "glass, ceramics and concrete manufacturing",
+        "household and institutional furniture manufacturing",
+        "household appliance manufacturing",
+        "hvac and refrigeration equipment manufacturing",
+        "industrial automation",
+        "industrial machinery manufacturing",
+        "leather product manufacturing",
+        "lime and gypsum products manufacturing",
+      ],
+    },
+  ],
+};
+
+// size 1.8 million
+const ManufacturingFive = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [      
+        "machinery manufacturing",
+        "magnetic and optical media manufacturing",
+        "mattress and blinds manufacturing",
+        "measuring and control instrument manufacturing",
+        "meat products manufacturing",
+        "mechanical or industrial engineering",
+        "medical equipment manufacturing",
+        "metal treatments",
+        "metal valve, ball, and roller manufacturing",
+        "metalworking machinery manufacturing",
+        "motor vehicle manufacturing",
+        "motor vehicle parts manufacturing",
+      ],
+    },
+  ],
+};
+
+// size 1.7 million
+const ManufacturingSix = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "office furniture and fixtures manufacturing",
+        "oil and coal product manufacturing",
+        "packaging & containers",
+        "packaging and containers manufacturing",
+        "paint, coating, and adhesive manufacturing",
+        "paper & forest products",
+        "paper and forest product manufacturing",
+        "personal care product manufacturing",
+        "pharmaceutical manufacturing",
+        "plastics and rubber product manufacturing",
+        "plastics manufacturing",
+        "primary metal manufacturing",
+        "printing services",
+        "railroad equipment manufacturing",
+        "renewable energy equipment manufacturing",
+        "renewable energy semiconductor manufacturing",
+        "robot manufacturing",
+        "rubber products manufacturing",
+        "seafood product manufacturing",
+        "semiconductor manufacturing",
+        "semiconductors",
+        "shipbuilding",
+        "smart meter manufacturing",
+        "soap and cleaning product manufacturing",
+        "sporting goods manufacturing",
+        "spring and wire product manufacturing",
+        "sugar and confectionery product manufacturing",
+        "textile manufacturing",
+        "tobacco manufacturing",
+        "transportation equipment manufacturing",
+        "turned products and fastener manufacturing",
+        "wineries",
+        "women's handbag manufacturing",
+        "wood product manufacturing",
+      ],
+    },
+  ],
+};
+
 // size 7k only
 
 const NonProfitOrganizations = {
@@ -625,7 +826,136 @@ const ProfessionalServices = {
   ],
 };
 
-// size 1.8 million
+// size 1.7 million
+const ProfessionalServicesOne = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "accessible architecture and design",
+        "accounting",
+        "advertising services",
+        "alternative dispute resolution",
+        "architecture and planning",
+        "biotechnology research",
+      ],
+    },
+  ],
+};
+
+// size 1.7 million
+const ProfessionalServicesTwo = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "business consulting and services",
+        "computer and network security",
+        "design",
+        "design services",
+        "digital accessibility services",
+        "engineering services",
+        "environmental services",
+        "government relations services",
+        "graphic design",
+      ],
+    },
+  ],
+};
+
+// size 2 million
+const ProfessionalServicesThree = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "it services and it consulting",
+        "it system custom software development",
+        "it system data services",
+        "it system design services",
+        "it system installation and disposal",
+        "it system operations and maintenance",
+        "it system testing and evaluation",
+        "it system training and support",
+      ],
+    },
+  ],
+};
+
+//size 890k
+const ProfessionalServicesFour = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "law practice",
+        "legal services",
+      ],
+    },
+  ],
+};
+
+// size 1 million
+const ProfessionalServicesFive = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [selectedCountry],
+    },
+    {
+      field: "job_company_industry",
+      operator: "ANY_OF_VALUES",
+      values: [
+        "human resources",
+        "human resources services",
+        "interior design",
+        "market research",
+        "marketing services",
+        "nanotechnology research",
+        "operations consulting",
+        "outsourcing and offshoring consulting",
+        "photography",
+        "program development",
+        "public relations and communications services",
+        "regenerative design",
+        "research services",
+        "robotics engineering",
+        "services for renewable energy",
+        "strategic management services",
+        "surveying and mapping services",
+        "think tanks",
+        "veterinary services",
+      ],
+    },
+  ],
+};
+
+// size 1.8 million`
 const RealEstateAndEquipmentRentalServices = {
   filters: [
     {
@@ -865,6 +1195,7 @@ const Wholesale = {
 };
 
 module.exports = {
+  selectedCountryKey,
   AccomodationServices,
   AdministrativeAndSupportServices,
   Construction,
@@ -888,4 +1219,15 @@ module.exports = {
   TransportationLogisticsAndSupplyChain,
   Utilities,
   Wholesale,
+  ProfessionalServicesOne,
+  ProfessionalServicesTwo,
+  ProfessionalServicesThree,
+  ProfessionalServicesFour,
+  ProfessionalServicesFive,
+  ManufacturingOne,
+  ManufacturingTwo,
+  ManufacturingThree,
+  ManufacturingFour,
+  ManufacturingFive,
+  ManufacturingSix,
 };

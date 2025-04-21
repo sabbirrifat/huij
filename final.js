@@ -4,6 +4,7 @@ const fs = require("fs");
 const readline = require("readline");
 
 const {
+  selectedCountryKey,
   AccomodationServices,
   AdministrativeAndSupportServices,
   Construction,
@@ -27,6 +28,17 @@ const {
   TransportationLogisticsAndSupplyChain,
   Utilities,
   Wholesale,
+  ProfessionalServicesOne,
+  ProfessionalServicesTwo,
+  ProfessionalServicesThree,
+  ProfessionalServicesFour,
+  ProfessionalServicesFive,
+  ManufacturingOne,
+  ManufacturingTwo,
+  ManufacturingThree,
+  ManufacturingFour,
+  ManufacturingFive,
+  ManufacturingSix,
 } = require("./categoryPayloads");
 
 // Create readline interface
@@ -181,7 +193,7 @@ async function loginAndGetToken() {
 
     // Navigate to the specified page
     console.log("Navigating to leads/contact page...");
-    await page.goto("https://app.zeliq.com/app/search/contact", { waitUntil: "networkidle2" });
+    await page.goto("https://app.zeliq.com/app/search/contact", { waitUntil: "networkidle2", timeout: 120000 });
 
     // Extract token from localStorage
     console.log("Extracting token from localStorage...");
@@ -236,7 +248,7 @@ async function refreshToken() {
 
   try {
     // Reload the page to refresh the session
-    await page.reload({ waitUntil: "networkidle2" });
+    await page.reload({ waitUntil: "networkidle2", timeout: 120000 });
 
     // Re-extract token from localStorage
     const token = await page.evaluate(() => {
@@ -394,15 +406,15 @@ async function fetchData(pageToken = null, selectedCategory) {
     } else {
       console.log(`Finished fetching data after ${apiCallCount} API calls.`);
 
-      // Save the last page token to file if available
-      if (data.meta && data.meta.nextPageToken) {
-        fs.writeFileSync("lastPageToken.txt", data.meta.nextPageToken);
-        console.log(`Saved last page token to lastPageToken.txt`);
-      }
-
       // Write final batch to file when done
       saveDataInChunks(allFetchedItems, resultsFile);
       console.log(`Completed saving all ${totalFetchCount} items`);
+
+      // Save the last page token to file if available
+      if (pageToken) {
+        fs.writeFileSync("lastPageToken.txt", pageToken);
+        console.log(`Saved last page token to lastPageToken.txt`);
+      }
 
       // Close browser when completely done
       if (browser) {
@@ -430,15 +442,15 @@ async function fetchData(pageToken = null, selectedCategory) {
         return await fetchData(pageToken, selectedCategory);
       } else {
         console.log("Something went wrong, saving last page token and current batch to file");
+        // Write current batch to file
+        saveDataInChunks(allFetchedItems, resultsFile);
+        console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
+
         // Save the last page token to file if available
         if (pageToken) {
           fs.writeFileSync("lastPageToken.txt", pageToken);
           console.log(`Saved last page token to lastPageToken.txt`);
         }
-
-        // Write current batch to file
-        saveDataInChunks(allFetchedItems, resultsFile);
-        console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
 
         // Close browser when done
         if (browser) {
@@ -448,15 +460,16 @@ async function fetchData(pageToken = null, selectedCategory) {
       }
     } else {
       console.log("Something went wrong, saving last page token and current batch to file");
+      
+      // Write current batch to file
+      saveDataInChunks(allFetchedItems, resultsFile);
+      console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
+
       // Save the last page token to file if available
       if (pageToken) {
         fs.writeFileSync("lastPageToken.txt", pageToken);
         console.log(`Saved last page token to lastPageToken.txt`);
       }
-
-      // Write current batch to file
-      saveDataInChunks(allFetchedItems, resultsFile);
-      console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
 
       // Close browser when done
       if (browser) {
@@ -502,6 +515,17 @@ async function main() {
     console.log("21. Transportation, Logistics And Supply Chain");
     console.log("22. Utilities");
     console.log("23. Wholesale");
+    console.log("24. Professional Services One");
+    console.log("25. Professional Services Two");
+    console.log("26. Professional Services Three");
+    console.log("27. Professional Services Four");
+    console.log("28. Professional Services Five");
+    console.log("29. Manufacturing One");
+    console.log("30. Manufacturing Two");
+    console.log("31. Manufacturing Three");
+    console.log("32. Manufacturing Four");
+    console.log("33. Manufacturing Five");
+    console.log("34. Manufacturing Six");
 
     const categoryChoice = await prompt("Enter your choice (1-23): ");
 
@@ -602,14 +626,57 @@ async function main() {
         selectedCategory = Wholesale;
         categoryName = "wholesale";
         break;
+      case "24":
+        selectedCategory = ProfessionalServicesOne;
+        categoryName = "professional-services-one";
+        break;
+      case "25":
+        selectedCategory = ProfessionalServicesTwo;
+        categoryName = "professional-services-two";
+        break;
+      case "26":
+        selectedCategory = ProfessionalServicesThree;
+        categoryName = "professional-services-three";
+        break;
+      case "27":
+        selectedCategory = ProfessionalServicesFour;
+        categoryName = "professional-services-four";
+        break;
+      case "28":
+        selectedCategory = ProfessionalServicesFive;
+        categoryName = "professional-services-five";
+        break;
+      case "29":
+        selectedCategory = ManufacturingOne;
+        categoryName = "manufacturing-one";
+        break;
+      case "30":
+        selectedCategory = ManufacturingTwo;
+        categoryName = "manufacturing-two";
+        break;
+      case "31":
+        selectedCategory = ManufacturingThree;
+        categoryName = "manufacturing-three";
+        break;
+      case "32":
+        selectedCategory = ManufacturingFour;
+        categoryName = "manufacturing-four";
+        break;
+      case "33":
+        selectedCategory = ManufacturingFive;
+        categoryName = "manufacturing-five";
+        break;
+      case "34":
+        selectedCategory = ManufacturingSix;
+        categoryName = "manufacturing-six";
+        break;
       default:
-        console.log("Invalid choice. Defaulting to Oil, Gas And Mining.");
-        selectedCategory = OilGasAndMining;
-        categoryName = "oil-gas-and-mining";
+        console.log("Invalid choice. Quitting...");
+        process.exit(1);
     }
 
     // Update the results file based on selected category
-    resultsFile = `us-${categoryName}.json`;
+    resultsFile = `${selectedCountryKey}-${categoryName}.json`;
     console.log(`\nSelected category: ${categoryName}`);
     console.log(`Results will be saved to: ${resultsFile}`);
 
