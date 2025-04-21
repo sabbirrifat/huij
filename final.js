@@ -39,6 +39,8 @@ const {
   ManufacturingFour,
   ManufacturingFive,
   ManufacturingSix,
+  IsraelAllData,
+  BangladeshAllData,
 } = require("./categoryPayloads");
 
 // Create readline interface
@@ -535,8 +537,10 @@ async function main() {
       console.log("32. Manufacturing Four");
       console.log("33. Manufacturing Five");
       console.log("34. Manufacturing Six");
+      console.log("35. Israel All Data");
+      console.log("36. Bangladesh All Data");
 
-      categoryChoice = await prompt("Enter your choice (1-23): ");
+      categoryChoice = await prompt("Enter your choice (1-36): ");
 
       // Close readline interface
       rl.close();
@@ -682,6 +686,14 @@ async function main() {
       case "34":
         selectedCategory = ManufacturingSix;
         categoryName = "manufacturing-six";
+        break;
+      case "35":
+        selectedCategory = IsraelAllData;
+        categoryName = "israel-all-data";
+        break;
+      case "36":
+        selectedCategory = BangladeshAllData;
+        categoryName = "bangladesh-all-data";
         break;
       default:
         console.log("Invalid choice. Quitting...");

@@ -21,12 +21,40 @@ const topCountries = {
   no: "norway",
   sg: "singapore",
   id: "indonesia",
+  il: "israel",
+  bd: "bangladesh",
 };
 
+const selectedCountry = "country";
+let selectedCountryKey;
 
-const selectedCountry = topCountries.us;
-const selectedCountryKey = Object.keys(topCountries).find(key => topCountries[key] === selectedCountry);
+if (selectedCountry === "country") {
+  selectedCountryKey = selectedCountry;
+} else {
+  selectedCountryKey = Object.keys(topCountries).find((key) => topCountries[key] === selectedCountry);
+}
 
+//israel size 654k
+const IsraelAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: ["israel"],
+    },
+  ],
+};
+
+//bangladesh size 902k
+const BangladeshAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: ["bangladesh"],
+    },
+  ],
+};
 
 //size 2.8 million
 const AccomodationServices = {
@@ -653,7 +681,7 @@ const ManufacturingFive = {
     {
       field: "job_company_industry",
       operator: "ANY_OF_VALUES",
-      values: [      
+      values: [
         "machinery manufacturing",
         "magnetic and optical media manufacturing",
         "mattress and blinds manufacturing",
@@ -911,10 +939,7 @@ const ProfessionalServicesFour = {
     {
       field: "job_company_industry",
       operator: "ANY_OF_VALUES",
-      values: [
-        "law practice",
-        "legal services",
-      ],
+      values: ["law practice", "legal services"],
     },
   ],
 };
@@ -1230,4 +1255,6 @@ module.exports = {
   ManufacturingFour,
   ManufacturingFive,
   ManufacturingSix,
+  IsraelAllData,
+  BangladeshAllData,
 };
