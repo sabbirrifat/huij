@@ -39,8 +39,26 @@ const {
   ManufacturingFour,
   ManufacturingFive,
   ManufacturingSix,
-  IsraelAllData,
-  BangladeshAllData,
+  AustraliaAllData,
+  NewZealandAllData,
+  GermanyAllData,
+  FranceAllData,
+  CanadaAllData,
+  UnitedArabEmiratesAllData,
+  NetherlandsAllData,
+  IrelandAllData,
+  ItalyAllData,
+  SpainAllData,
+  MexicoAllData,
+  SwedenAllData,
+  TurkeyAllData,
+  BelgiumAllData,
+  SwitzerlandAllData,
+  BrazilAllData,
+  DenmarkAllData,
+  NorwayAllData,
+  SingaporeAllData,
+  IndonesiaAllData,
 } = require("./categoryPayloads");
 
 // Create readline interface
@@ -537,10 +555,28 @@ async function main() {
       console.log("32. Manufacturing Four");
       console.log("33. Manufacturing Five");
       console.log("34. Manufacturing Six");
-      console.log("35. Israel All Data");
-      console.log("36. Bangladesh All Data");
+      console.log("35. Australia All Data");
+      console.log("36. New Zealand All Data");
+      console.log("37. Germany All Data");
+      console.log("38. France All Data");
+      console.log("39. Canada All Data");
+      console.log("40. United Arab Emirates All Data");
+      console.log("41. Netherlands All Data");
+      console.log("42. Ireland All Data");
+      console.log("43. Italy All Data");
+      console.log("44. Spain All Data");
+      console.log("45. Mexico All Data");
+      console.log("46. Sweden All Data");
+      console.log("47. Turkey All Data");
+      console.log("48. Belgium All Data");
+      console.log("49. Switzerland All Data");
+      console.log("50. Brazil All Data");
+      console.log("51. Denmark All Data");
+      console.log("52. Norway All Data");
+      console.log("53. Singapore All Data");
+      console.log("54. Indonesia All Data");
 
-      categoryChoice = await prompt("Enter your choice (1-36): ");
+      categoryChoice = await prompt("Enter your choice (1-54): ");
 
       // Close readline interface
       rl.close();
@@ -688,13 +724,86 @@ async function main() {
         categoryName = "manufacturing-six";
         break;
       case "35":
-        selectedCategory = IsraelAllData;
-        categoryName = "israel-all-data";
+        selectedCategory = AustraliaAllData;
+        categoryName = "australia-all-data";
         break;
       case "36":
-        selectedCategory = BangladeshAllData;
-        categoryName = "bangladesh-all-data";
+        selectedCategory = NewZealandAllData;
+        categoryName = "new-zealand-all-data";
         break;
+      case "37":
+        selectedCategory = GermanyAllData;
+        categoryName = "germany-all-data";
+        break;
+      case "38":
+        selectedCategory = FranceAllData;
+        categoryName = "france-all-data";
+        break;
+      case "39":
+        selectedCategory = CanadaAllData;
+        categoryName = "canada-all-data";
+        break;
+      case "40":
+        selectedCategory = UnitedArabEmiratesAllData;
+        categoryName = "united-arab-emirates-all-data";
+        break;
+      case "41":
+        selectedCategory = NetherlandsAllData;
+        categoryName = "netherlands-all-data";
+        break;
+      case "42":
+        selectedCategory = IrelandAllData;
+        categoryName = "ireland-all-data";
+        break;
+      case "43":
+        selectedCategory = ItalyAllData;
+        categoryName = "italy-all-data";
+        break;
+      case "44":
+        selectedCategory = SpainAllData;
+        categoryName = "spain-all-data";
+        break;
+      case "45":
+        selectedCategory = MexicoAllData;
+        categoryName = "mexico-all-data";
+        break;
+      case "46":
+        selectedCategory = SwedenAllData;
+        categoryName = "sweden-all-data";
+        break;
+      case "47":
+        selectedCategory = TurkeyAllData;
+        categoryName = "turkey-all-data";
+        break;
+      case "48":
+        selectedCategory = BelgiumAllData;
+        categoryName = "belgium-all-data";
+        break;
+      case "49":
+        selectedCategory = SwitzerlandAllData;
+        categoryName = "switzerland-all-data";
+        break;
+      case "50":
+        selectedCategory = BrazilAllData;
+        categoryName = "brazil-all-data";
+        break;
+      case "51":
+        selectedCategory = DenmarkAllData;
+        categoryName = "denmark-all-data";
+        break;
+      case "52":
+        selectedCategory = NorwayAllData;
+        categoryName = "norway-all-data";
+        break;
+      case "53":
+        selectedCategory = SingaporeAllData;
+        categoryName = "singapore-all-data";
+        break;
+      case "54":
+        selectedCategory = IndonesiaAllData;
+        categoryName = "indonesia-all-data";
+        break;
+        
       default:
         console.log("Invalid choice. Quitting...");
         process.exit(1);

@@ -21,8 +21,6 @@ const topCountries = {
   no: "norway",
   sg: "singapore",
   id: "indonesia",
-  il: "israel",
-  bd: "bangladesh",
 };
 
 const selectedCountry = "country";
@@ -34,29 +32,210 @@ if (selectedCountry === "country") {
   selectedCountryKey = Object.keys(topCountries).find((key) => topCountries[key] === selectedCountry);
 }
 
-//israel size 654k
-const IsraelAllData = {
+const AustraliaAllData = {
   filters: [
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["israel"],
+      values: [topCountries.au],
     },
   ],
 };
 
-//bangladesh size 902k
-const BangladeshAllData = {
+const NewZealandAllData = {
   filters: [
     {
       field: "location_country",
       operator: "ANY_OF_VALUES",
-      values: ["bangladesh"],
+      values: [topCountries.nz],
     },
   ],
 };
 
-//size 2.8 million
+const GermanyAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.de],
+    },
+  ],
+};
+
+const FranceAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.fr],
+    },
+  ],
+};
+
+const CanadaAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.ca],
+    },
+  ],
+};
+
+const UnitedArabEmiratesAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.ae],
+    },
+  ],
+};
+
+const NetherlandsAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.nl],
+    },
+  ],
+};
+
+const IrelandAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.ie],
+    },
+  ],
+};
+
+const ItalyAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.it],
+    },
+  ],
+};
+
+const SpainAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.es],
+    },
+  ],
+};
+
+const MexicoAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.mx],
+    },
+  ],
+};
+
+const SwedenAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.se],
+    },
+  ],
+};
+
+const TurkeyAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.tr],
+    },
+  ],
+};
+
+const BelgiumAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.be],
+    },
+  ],
+};
+
+const SwitzerlandAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.ch],
+    },
+  ],
+};
+
+const BrazilAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.br],
+    },
+  ],
+};
+
+const DenmarkAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.dk],
+    },
+  ],
+};
+
+const NorwayAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.no],
+    },
+  ],
+};
+
+const SingaporeAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.sg],
+    },
+  ],
+};
+
+const IndonesiaAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.id],
+    },
+  ],
+};
+
+
+
+
+
 const AccomodationServices = {
   filters: [
     { field: "location_country", operator: "ANY_OF_VALUES", values: [selectedCountry] },
@@ -1255,6 +1434,24 @@ module.exports = {
   ManufacturingFour,
   ManufacturingFive,
   ManufacturingSix,
-  IsraelAllData,
-  BangladeshAllData,
+  AustraliaAllData,
+  NewZealandAllData,
+  GermanyAllData,
+  FranceAllData,
+  CanadaAllData,
+  UnitedArabEmiratesAllData,
+  NetherlandsAllData,
+  IrelandAllData,
+  ItalyAllData,
+  SpainAllData,
+  MexicoAllData,
+  SwedenAllData,
+  TurkeyAllData,
+  BelgiumAllData,
+  SwitzerlandAllData,
+  BrazilAllData,
+  DenmarkAllData,
+  NorwayAllData,
+  SingaporeAllData,
+  IndonesiaAllData,
 };
