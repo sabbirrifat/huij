@@ -24,7 +24,7 @@ const topCountries = {
 };
 
 
-const selectedCountry = topCountries.us;
+const selectedCountry = topCountries.uk;
 const selectedCountryKey = Object.keys(topCountries).find(key => topCountries[key] === selectedCountry);
 
 
