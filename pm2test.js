@@ -53,6 +53,16 @@ function stopPM2() {
       console.error(`Error disabling PM2 startup: ${unstartupError.message}`);
     } else {
       console.log(`PM2 startup disabled: ${unstartupStdout}`);
+      // wait 10 seconds before stopping PM2
+      setTimeout(() => {
+        exec('pm2 stop all', (error, stdout, stderr) => {
+          if (error) {
+            console.error(`Error stopping PM2: ${error.message}`);
+          return;
+        }
+          console.log(`PM2 stopped: ${stdout}`);
+        });
+      }, 10000);
     }
     
     /* // Then stop all PM2 processes
@@ -69,5 +79,4 @@ function stopPM2() {
       process.exit(0);
     }); */
   });
-  process.exit(0);
 }
