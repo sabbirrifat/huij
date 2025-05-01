@@ -55,7 +55,7 @@ function stopPM2() {
       console.log(`PM2 startup disabled: ${unstartupStdout}`);
     }
     
-    // Then stop all PM2 processes
+    /* // Then stop all PM2 processes
     exec('pm2 stop all', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error stopping PM2: ${error.message}`);
@@ -67,6 +67,7 @@ function stopPM2() {
       }
       console.log(`PM2 stopped: ${stdout}`);
       process.exit(0);
-    });
+    }); */
   });
+  process.exit(0);
 }
