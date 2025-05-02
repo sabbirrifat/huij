@@ -74,6 +74,15 @@ const ChinaAllData = {
   ],
 };
 
+const GermanyAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.de],
+    },
+  ],
+};
 
 //size 2.8 million
 const AccomodationServices = {
@@ -1278,4 +1287,5 @@ module.exports = {
   BrazilAllData,
   IndiaAllData,
   ChinaAllData,
+  GermanyAllData,
 };
