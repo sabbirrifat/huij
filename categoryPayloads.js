@@ -23,10 +23,35 @@ const topCountries = {
   id: "indonesia",
 };
 
+const selectedCountry = "country";
+let selectedCountryKey;
 
-const selectedCountry = topCountries.us;
-const selectedCountryKey = Object.keys(topCountries).find(key => topCountries[key] === selectedCountry);
+if (selectedCountry === "country") {
+  selectedCountryKey = selectedCountry;
+} else {
+  selectedCountryKey = Object.keys(topCountries).find((key) => topCountries[key] === selectedCountry);
+}
 
+
+const FranceAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.fr],
+    },
+  ],
+};
+
+const BrazilAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.br],
+    },
+  ],
+};
 
 //size 2.8 million
 const AccomodationServices = {
@@ -1230,4 +1255,6 @@ module.exports = {
   ManufacturingFour,
   ManufacturingFive,
   ManufacturingSix,
+  FranceAllData,
+  BrazilAllData,
 };

@@ -1,5 +1,6 @@
 const puppeteer = require("puppeteer");
 const axios = require("axios");
+const { exec } = require('child_process');
 const fs = require("fs");
 const readline = require("readline");
 
@@ -39,6 +40,8 @@ const {
   ManufacturingFour,
   ManufacturingFive,
   ManufacturingSix,
+  FranceAllData,
+  BrazilAllData,
 } = require("./categoryPayloads");
 
 // Create readline interface
@@ -73,6 +76,7 @@ let password;
 let orgId = "";
 let lastChunkFewerThan100k = false;
 let lastChunkFewerThan100kCount = 0;
+let categoryName;
 
 // Counter for API calls
 let apiCallCount = 0;
@@ -138,6 +142,49 @@ function loadExistingData() {
     console.error("Error reading existing results file:", error.message);
     return [];
   }
+}
+
+async function sendNotification(message) {
+  const notifyUrl = "https://nodemation.autospark.space/webhook/adac6059-2671-4fe7-b544-483c13b5bb0b";
+
+  try {
+    const response = await axios.post(notifyUrl, {
+      // You can add any data you want to send in the request body
+      message: message,
+      timestamp: new Date().toISOString(),
+    }, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("Response:", response.data);
+  } catch (error) {
+    console.log("Error:", error);
+  }
+};
+
+function stopPM2() {
+
+  // First disable PM2 startup service to prevent auto-restart on VPS reboot
+  exec('pm2 unstartup', (unstartupError, unstartupStdout, unstartupStderr) => {
+    if (unstartupError) {
+      console.log(`Error disabling PM2 startup: ${unstartupError.message}`);
+    } else {
+      console.log(`PM2 startup disabled: ${unstartupStdout}`);
+      // wait 10 seconds before stopping PM2
+      setTimeout(() => {
+        exec('pm2 stop all', (error, stdout, stderr) => {
+          if (error) {
+            console.log(`Error stopping PM2: ${error.message}`);
+          return;
+        }
+          console.log(`PM2 stopped: ${stdout}`);
+        });
+      }, 10000);
+    }
+  });
 }
 
 // Function to login and get token using puppeteer
@@ -285,7 +332,7 @@ async function refreshToken() {
 }
 
 // Function to save data in chunks
-function saveDataInChunks(data, filename) {
+async function saveDataInChunks(data, filename) {
   if (data.length === 0) {
     console.log("No data to save");
     return;
@@ -330,6 +377,8 @@ function saveDataInChunks(data, filename) {
   }
   fs.writeFileSync("totalFetchCount.txt", totalFetchCount.toString());
   console.log(`Updated total fetch count: ${totalFetchCount} (saved to totalFetchCount.txt)`);
+  const totalFetchCountInWords = totalFetchCount.toLocaleString();
+  sendNotification(`${categoryName} has been updated with ${totalFetchCountInWords} items`);
 
   // Clear the array to free up memory
   allFetchedItems = [];
@@ -389,7 +438,7 @@ async function fetchData(pageToken = null, selectedCategory) {
         console.log(`\x1b[33mReached 100,000 items in current batch. Saving checkpoint.\x1b[0m`);
 
         // Save the data chunk and clear memory
-        saveDataInChunks(allFetchedItems, resultsFile);
+        await saveDataInChunks(allFetchedItems, resultsFile);
         console.log(`\x1b[33mCheckpoint saved at ${apiCallCount} API calls\x1b[0m`);
 
         // Save the last page token
@@ -407,8 +456,9 @@ async function fetchData(pageToken = null, selectedCategory) {
       console.log(`Finished fetching data after ${apiCallCount} API calls.`);
 
       // Write final batch to file when done
-      saveDataInChunks(allFetchedItems, resultsFile);
+      await saveDataInChunks(allFetchedItems, resultsFile);
       console.log(`Completed saving all ${totalFetchCount} items`);
+      await sendNotification(`${categoryName} has been completed!!!!!`);
 
       // Save the last page token to file if available
       if (pageToken) {
@@ -443,7 +493,7 @@ async function fetchData(pageToken = null, selectedCategory) {
       } else {
         console.log("Something went wrong, saving last page token and current batch to file");
         // Write current batch to file
-        saveDataInChunks(allFetchedItems, resultsFile);
+        await saveDataInChunks(allFetchedItems, resultsFile);
         console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
 
         // Save the last page token to file if available
@@ -457,12 +507,13 @@ async function fetchData(pageToken = null, selectedCategory) {
           await browser.close();
           console.log("Browser closed");
         }
+        process.exit(1);
       }
     } else {
       console.log("Something went wrong, saving last page token and current batch to file");
 
       // Write current batch to file
-      saveDataInChunks(allFetchedItems, resultsFile);
+      await saveDataInChunks(allFetchedItems, resultsFile);
       console.log(`Saved current batch. Total items saved across all chunks: ${totalFetchCount}`);
 
       // Save the last page token to file if available
@@ -476,10 +527,8 @@ async function fetchData(pageToken = null, selectedCategory) {
         await browser.close();
         console.log("Browser closed");
       }
+      process.exit(1);
     }
-
-    // For other errors, log and continue
-    console.error("Error details:", error);
   }
 }
 
@@ -535,6 +584,8 @@ async function main() {
       console.log("32. Manufacturing Four");
       console.log("33. Manufacturing Five");
       console.log("34. Manufacturing Six");
+      console.log("35. France");
+      console.log("36. Brazil");
 
       categoryChoice = await prompt("Enter your choice (1-23): ");
 
@@ -544,7 +595,7 @@ async function main() {
 
     // Parse the category choice
     let selectedCategory;
-    let categoryName;
+    
 
     switch (categoryChoice.trim()) {
       case "1":
@@ -683,6 +734,14 @@ async function main() {
         selectedCategory = ManufacturingSix;
         categoryName = "manufacturing-six";
         break;
+      case "35":
+        selectedCategory = FranceAllData;
+        categoryName = "France";
+        break;
+      case "36":
+        selectedCategory = BrazilAllData;
+        categoryName = "Brazil";
+        break;
       default:
         console.log("Invalid choice. Quitting...");
         process.exit(1);
@@ -727,6 +786,8 @@ async function main() {
       await browser.close();
       console.log("Browser closed");
     }
+    stopPM2();
+
   } catch (err) {
     console.error("Unhandled error:", err);
 
@@ -735,6 +796,7 @@ async function main() {
       await browser.close();
       console.log("Browser closed due to error");
     }
+    process.exit(1);
   }
 }
 
