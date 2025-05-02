@@ -2,9 +2,21 @@ const { exec } = require('child_process');
 const fs = require('fs');
 
 const countFile = 'testo.txt';
+const errorFlagFile = 'error_thrown.flag';
 let counter = 0;
 const maxCount = 600;
 let shouldStopPM2 = false;
+let errorAlreadyThrown = false;
+
+// Check if error has already been thrown in a previous run
+try {
+  errorAlreadyThrown = fs.existsSync(errorFlagFile);
+  if (errorAlreadyThrown) {
+    console.log('\x1b[34m%s\x1b[0m', 'Error was already thrown in a previous run, will not throw again');
+  }
+} catch (err) {
+  console.error(`Error checking error flag file: ${err.message}`);
+}
 
 // Load counter from file if it exists
 try {
@@ -21,10 +33,20 @@ const interval = setInterval(() => {
   counter++;
   console.log('\x1b[32m%s\x1b[0m', `The current counter is: ${counter}`);
   
-  // Throw error after 2 minutes to test PM2 auto-restart
-  if (counter === 170) {
-    console.log('\x1b[31m%s\x1b[0m', 'Intentionally throwing error to test PM2 auto-restart');
-    throw new Error('Intentional crash after 2 minutes to test PM2 auto-restart');
+  // Throw error after 2 minutes to test PM2 auto-restart, but only once
+  if (counter === 150 && !errorAlreadyThrown) {
+    // Create flag file to indicate we've thrown the error
+    try {
+      fs.writeFileSync(errorFlagFile, 'true');
+      console.log('\x1b[31m%s\x1b[0m', 'Intentionally throwing error to test PM2 auto-restart');
+      throw new Error('Intentional crash after 2 minutes to test PM2 auto-restart');
+    } catch (err) {
+      if (err.message !== 'Intentional crash after 2 minutes to test PM2 auto-restart') {
+        console.error(`Error creating flag file: ${err.message}`);
+      } else {
+        throw err; // Re-throw the intentional error
+      }
+    }
   }
   
   // Save counter to file every 60 counts
