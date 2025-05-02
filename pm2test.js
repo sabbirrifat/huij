@@ -21,6 +21,12 @@ const interval = setInterval(() => {
   counter++;
   console.log('\x1b[32m%s\x1b[0m', `The current counter is: ${counter}`);
   
+  // Throw error after 2 minutes to test PM2 auto-restart
+  if (counter === 170) {
+    console.log('\x1b[31m%s\x1b[0m', 'Intentionally throwing error to test PM2 auto-restart');
+    throw new Error('Intentional crash after 2 minutes to test PM2 auto-restart');
+  }
+  
   // Save counter to file every 60 counts
   if (counter % 60 === 0) {
     try {
