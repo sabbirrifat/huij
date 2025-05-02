@@ -42,6 +42,8 @@ const {
   ManufacturingSix,
   FranceAllData,
   BrazilAllData,
+  IndiaAllData,
+  ChinaAllData,
 } = require("./categoryPayloads");
 
 // Create readline interface
@@ -741,6 +743,14 @@ async function main() {
       case "36":
         selectedCategory = BrazilAllData;
         categoryName = "Brazil";
+        break;
+      case "37":
+        selectedCategory = IndiaAllData;
+        categoryName = "India";
+        break;
+      case "38":
+        selectedCategory = ChinaAllData;
+        categoryName = "China";
         break;
       default:
         console.log("Invalid choice. Quitting...");

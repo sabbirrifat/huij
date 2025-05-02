@@ -21,6 +21,8 @@ const topCountries = {
   no: "norway",
   sg: "singapore",
   id: "indonesia",
+  in: "india",
+  cn: "china",
 };
 
 const selectedCountry = "country";
@@ -31,7 +33,6 @@ if (selectedCountry === "country") {
 } else {
   selectedCountryKey = Object.keys(topCountries).find((key) => topCountries[key] === selectedCountry);
 }
-
 
 const FranceAllData = {
   filters: [
@@ -52,6 +53,27 @@ const BrazilAllData = {
     },
   ],
 };
+
+const IndiaAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.in],
+    },
+  ],
+};
+
+const ChinaAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: [topCountries.cn],
+    },
+  ],
+};
+
 
 //size 2.8 million
 const AccomodationServices = {
@@ -678,7 +700,7 @@ const ManufacturingFive = {
     {
       field: "job_company_industry",
       operator: "ANY_OF_VALUES",
-      values: [      
+      values: [
         "machinery manufacturing",
         "magnetic and optical media manufacturing",
         "mattress and blinds manufacturing",
@@ -936,10 +958,7 @@ const ProfessionalServicesFour = {
     {
       field: "job_company_industry",
       operator: "ANY_OF_VALUES",
-      values: [
-        "law practice",
-        "legal services",
-      ],
+      values: ["law practice", "legal services"],
     },
   ],
 };
@@ -1257,4 +1276,6 @@ module.exports = {
   ManufacturingSix,
   FranceAllData,
   BrazilAllData,
+  IndiaAllData,
+  ChinaAllData,
 };
