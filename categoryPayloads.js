@@ -25,7 +25,7 @@ const topCountries = {
   cn: "china",
 };
 
-const selectedCountry = topCountries.us;
+const selectedCountry = "country";
 let selectedCountryKey;
 
 if (selectedCountry === "country") {
@@ -33,6 +33,17 @@ if (selectedCountry === "country") {
 } else {
   selectedCountryKey = Object.keys(topCountries).find((key) => topCountries[key] === selectedCountry);
 }
+
+
+const PolandAllData = {
+  filters: [
+    {
+      field: "location_country",
+      operator: "ANY_OF_VALUES",
+      values: ["poland"],
+    },
+  ],
+};
 
 const FranceAllData = {
   filters: [
@@ -1817,4 +1828,5 @@ module.exports = {
   BrazilPartThree,
   BrazilPartFour,
   BrazilPartFive,
+  PolandAllData,
 };

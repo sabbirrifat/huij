@@ -50,6 +50,7 @@ const {
   BrazilPartThree,
   BrazilPartFour,
   BrazilPartFive,
+  PolandAllData,
 } = require("./categoryPayloads");
 
 // Create readline interface
@@ -781,6 +782,10 @@ async function main() {
       case "44":
         selectedCategory = BrazilPartFive;
         categoryName = "brazil-part-five";
+        break;
+      case "45":
+        selectedCategory = PolandAllData;
+        categoryName = "poland";
         break;
       default:
         console.log("Invalid choice. Quitting...");
