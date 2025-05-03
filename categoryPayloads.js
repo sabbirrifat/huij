@@ -25,7 +25,7 @@ const topCountries = {
   cn: "china",
 };
 
-const selectedCountry = "country";
+const selectedCountry = topCountries.us;
 let selectedCountryKey;
 
 if (selectedCountry === "country") {
