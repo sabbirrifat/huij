@@ -52,6 +52,7 @@ const {
   BrazilPartFive,
   PolandAllData,
   NetherlandsAllData,
+  CompaniesAllData,
 } = require("./categoryPayloads");
 
 // Create readline interface
@@ -399,17 +400,18 @@ async function saveDataInChunks(data, filename) {
 async function fetchData(pageToken = null, selectedCategory) {
   // Base URL for API
   const baseUrl = `https://api.zeliq.com/api/${orgId}/leads/search?limitPerPage=100&resource=contact`;
+  const companyBaseUrl = `https://api.zeliq.com/api/${orgId}/leads/search?limitPerPage=100&resource=company`;
   try {
     // Increment API call counter
     apiCallCount++;
 
-    let url = baseUrl;
+    let url = companyBaseUrl;
 
     // Add page token if available
     if (pageToken) {
       // Replace space with + in page token
       const formattedToken = pageToken.replace(" ", "+");
-      url = `${baseUrl}&pageToken=${formattedToken}`;
+      url = `${companyBaseUrl}&pageToken=${formattedToken}`;
     }
 
     console.log(`Making API call #${apiCallCount}`);
@@ -791,6 +793,10 @@ async function main() {
       case "46":
         selectedCategory = NetherlandsAllData;
         categoryName = "netherlands";
+        break;
+      case "47":
+        selectedCategory = CompaniesAllData;
+        categoryName = "companies";
         break;
       default:
         console.log("Invalid choice. Quitting...");
