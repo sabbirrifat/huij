@@ -53,6 +53,7 @@ const {
   PolandAllData,
   NetherlandsAllData,
   CompaniesAllData,
+  CompaniesUSData,
 } = require("./categoryPayloads");
 
 // Create readline interface
@@ -797,6 +798,10 @@ async function main() {
       case "47":
         selectedCategory = CompaniesAllData;
         categoryName = "companies";
+        break;
+      case "48":
+        selectedCategory = CompaniesUSData;
+        categoryName = "companies-us";
         break;
       default:
         console.log("Invalid choice. Quitting...");

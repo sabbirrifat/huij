@@ -35,9 +35,18 @@ if (selectedCountry === "country" || selectedCountry === "companies") {
 }
 
 const CompaniesAllData = {
-  filters: []
-}
+  filters: [],
+};
 
+const CompaniesUSData = {
+  filters: [
+    {
+      field: "job_company_location_country",
+      operator: "ANY_OF_VALUES",
+      values: ["united states"],
+    },
+  ],
+};
 
 const PolandAllData = {
   filters: [
@@ -1845,4 +1854,5 @@ module.exports = {
   PolandAllData,
   NetherlandsAllData,
   CompaniesAllData,
+  CompaniesUSData,
 };
